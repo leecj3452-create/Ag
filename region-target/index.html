@@ -115,22 +115,76 @@ tfoot td { font-weight: 700; border-bottom: none; }
 .sources { font-size: 0.8rem; color: var(--muted); display: grid; gap: 4px; }
 .sources a { color: var(--accent); }
 @media (prefers-reduced-motion: reduce) { .split div { transition: none; } }
+/* 보고용 추가 스타일 */
+.verdict { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; }
+.stat { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; display: grid; gap: 4px; align-content: start; }
+.stat.key { border-color: var(--am0); box-shadow: inset 0 0 0 1px var(--am0); }
+.stat .lab { font-size: 0.8rem; color: var(--muted); font-weight: 600; }
+.stat .val { font-size: 2.1rem; font-weight: 600; line-height: 1.1; }
+.stat.key .val { color: var(--am0); }
+.cmp { display: grid; gap: 10px; }
+.cmp-row { display: grid; grid-template-columns: minmax(150px, 220px) minmax(0, 1fr); gap: 12px; align-items: center; }
+@media (max-width: 620px) { .cmp-row { grid-template-columns: 1fr; gap: 4px; } }
+.cmp-row .lab { font-size: 0.88rem; font-weight: 600; }
+.cmp-row .lab small { display: block; font-weight: 400; color: var(--muted); font-size: 0.78rem; }
+.stack { display: flex; height: 28px; border-radius: 6px; overflow: hidden; background: var(--chip); }
+.stack div { display: flex; align-items: center; padding-inline: 8px; font-size: 0.8rem; font-weight: 600; color: #fff; white-space: nowrap; font-family: var(--font-num); }
+.stack .me { background: var(--am0); }
+.stack .rest { background: var(--none); justify-content: flex-end; }
+.cmp-row.pick .lab { color: var(--am0); }
+.cmp-row.pick .stack { outline: 2px solid var(--am0); outline-offset: 2px; }
+.legend { display: flex; flex-wrap: wrap; gap: 14px; font-size: 0.82rem; color: var(--muted); }
+.legend i { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 5px; vertical-align: -1px; }
+.logic { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px; }
+.logic .panel { display: grid; gap: 8px; align-content: start; }
+.logic ul { margin: 0; padding-left: 1.2em; display: grid; gap: 4px; }
+.step { font-family: var(--font-num); font-size: 0.75rem; color: var(--accent); font-weight: 500; }
+.qa { display: grid; gap: 8px; }
+.qa details { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 10px 14px; }
+.qa summary { cursor: pointer; font-weight: 600; }
+.qa details p { margin-top: 6px; color: var(--muted); max-width: 80ch; }
+.weights { display: grid; gap: 10px; }
+.wrow { display: grid; grid-template-columns: 90px minmax(0, 1fr) 52px; gap: 10px; align-items: center; font-size: 0.88rem; }
 </style>
 
 <div class="wrap">
   <header>
-    <span class="eyebrow">Korea · 17개 시도 · 2024 GRDP 기준</span>
+    <span class="eyebrow">Agilent 소모품 · 국내 지역 타겟 검토</span>
     <h1>시도별 매출 타겟 배분</h1>
-    <p class="lede">지역 경제 규모(지역내총생산)와 인구를 섞어 17개 시도마다 "한국 전체 매출 중 이 지역이 차지해야 할 몫"을 계산합니다. 각 시도를 담당 AM에게 배정하면 AM별 적정 타겟 비중이 바로 나옵니다. 실제 매출을 넣으면 지역별로 목표 대비 잘 되고 있는지도 확인할 수 있습니다.</p>
+    <p class="lede">Agilent 소모품은 실험실에서 쓰입니다. 그래서 지역 타겟은 경제 규모가 아니라 <b>실험실이 어디에 모여 있는지</b>를 기준으로 잡아야 합니다. 이 기준으로 보면 chanju 담당 9개 시도(동남권·호남권·대경권·강원)의 적정 매출 비중은 <b>전국의 약 20%</b>입니다.</p>
   </header>
 
-  <section class="section" aria-labelledby="s-admin">
-    <h2 id="s-admin">한국 행정구역: 도 9곳 + 시 8곳 = 17개 시도</h2>
-    <div class="admin">
-      <div class="grp"><b>도 (9) · 강원·전북·제주는 특별자치도</b><div class="tags"><span class="tag">경기도</span><span class="tag">강원특별자치도</span><span class="tag">충청북도</span><span class="tag">충청남도</span><span class="tag">전북특별자치도</span><span class="tag">전라남도</span><span class="tag">경상북도</span><span class="tag">경상남도</span><span class="tag">제주특별자치도</span></div></div>
-      <div class="grp"><b>특별시·광역시·특별자치시 (8)</b><div class="tags"><span class="tag">서울특별시</span><span class="tag">부산광역시</span><span class="tag">대구광역시</span><span class="tag">인천광역시</span><span class="tag">광주광역시</span><span class="tag">대전광역시</span><span class="tag">울산광역시</span><span class="tag">세종특별자치시</span></div></div>
+  <section class="section" aria-labelledby="s-verdict">
+    <h2 id="s-verdict">결론: 담당 권역별 적정 매출 비중</h2>
+    <div class="verdict" id="verdict"></div>
+    <div class="panel cmp" id="cmp" aria-label="기준별 chanju 담당 지역 비중 비교"></div>
+    <div class="legend"><span><i style="background:var(--am0)"></i><span id="lgMe">chanju 담당 9개 시도</span></span><span><i style="background:var(--none)"></i>나머지 8개 시도 (서울·경기·인천·대전·세종·충북·충남·제주)</span></div>
+  </section>
+
+  <section class="section" aria-labelledby="s-logic">
+    <h2 id="s-logic">왜 R&amp;D 투자 분포가 기준인가</h2>
+    <div class="logic">
+      <div class="panel">
+        <span class="step">근거 1</span>
+        <h3>소모품은 실험실에서 소비됩니다</h3>
+        <p>LC·GC 컬럼, 바이알, 필터, 시료 전처리 제품은 연구소, QC 실험실, 시험·검사기관에서 씁니다. 인구나 생산액이 커도 실험실이 없으면 소모품 수요는 생기지 않습니다. 실험실 활동량을 가장 잘 보여주는 공식 통계가 <b>지역별 연구개발비</b>입니다.</p>
+      </div>
+      <div class="panel">
+        <span class="step">근거 2</span>
+        <h3>R&amp;D는 수도권과 대전에 80% 집중</h3>
+        <ul>
+          <li>경기 51.2%, 서울 15.7%. 수도권 합계 <b>70.1%</b></li>
+          <li>대전(대덕 연구단지)까지 합치면 <b>79.3%</b></li>
+          <li>chanju 담당 9개 시도 합계는 <b>13.9%</b></li>
+        </ul>
+        <p class="note">현장에서 말하는 "수도권 80 : 지방 20"과 공식 통계가 거의 일치합니다.</p>
+      </div>
+      <div class="panel">
+        <span class="step">근거 3</span>
+        <h3>지방 제조업 QC 수요는 30% 반영</h3>
+        <p>울산·여수 석유화학, 포항·광양 철강, 경남 조선·기계에는 품질관리 실험실이 있어 실제 소모품 수요가 있습니다. 이를 반영해 <b>R&amp;D 70% + 경제 규모(GRDP) 30%</b>로 섞으면 chanju 담당 비중은 <b id="blendMe">약 20%</b>입니다.</p>
+      </div>
     </div>
-    <p class="note">광역시는 도와 별개의 행정구역입니다. "경남 담당"에 부산·울산이 포함되는지처럼 경계가 애매하면 타겟이 크게 달라지므로, 아래 표에서 17개를 하나씩 배정하도록 했습니다.</p>
   </section>
 
   <section class="section" aria-labelledby="s-am">
@@ -143,141 +197,129 @@ tfoot td { font-weight: 700; border-bottom: none; }
   </section>
 
   <section class="section" aria-labelledby="s-ctrl">
-    <h2 id="s-ctrl">타겟 산정 기준</h2>
+    <h2 id="s-ctrl">타겟 산정 기준 바꿔보기</h2>
     <div class="controls">
       <div class="panel ctrl">
-        <label for="w">경제 규모(GRDP) 대 인구 가중치</label>
+        <label>지표별 가중치</label>
         <div class="presets" id="presets">
-          <button data-w="80" type="button">B2B·산업재 (GRDP 80 : 인구 20)</button>
-          <button data-w="50" type="button">균형 (50 : 50)</button>
-          <button data-w="30" type="button">소비재·B2C (30 : 70)</button>
+          <button data-p="70,30,0" type="button">제안안 (R&amp;D 70 · GRDP 30)</button>
+          <button data-p="100,0,0" type="button">R&amp;D만</button>
+          <button data-p="0,100,0" type="button">GRDP만</button>
+          <button data-p="0,50,50" type="button">GRDP 50 · 인구 50</button>
         </div>
-        <input type="range" id="w" min="0" max="100" step="5" value="50">
-        <div class="range-legend"><span>인구 중심</span><span class="num" id="wLabel">GRDP 50% · 인구 50%</span><span>GRDP 중심</span></div>
-        <p class="note">기업·공장·병원 등에 파는 사업이면 GRDP 비중을 높이고, 일반 소비자 대상이면 인구 비중을 높이세요. 두 값의 차이가 큰 곳(울산·충남은 GRDP가 크고, 대구·부산은 인구가 큼)에서 타겟이 가장 많이 달라집니다.</p>
+        <div class="weights">
+          <div class="wrow"><label for="wr">R&amp;D 투자</label><input type="range" id="wr" data-k="r" min="0" max="100" step="5"><span class="num" id="wrL"></span></div>
+          <div class="wrow"><label for="wg">경제 규모</label><input type="range" id="wg" data-k="g" min="0" max="100" step="5"><span class="num" id="wgL"></span></div>
+          <div class="wrow"><label for="wp">인구</label><input type="range" id="wp" data-k="p" min="0" max="100" step="5"><span class="num" id="wpL"></span></div>
+        </div>
+        <p class="note">세 값의 비율로 섞습니다(합이 100이 아니어도 자동으로 맞춤). R&amp;D 비중을 높일수록 chanju 담당 비중이 내려갑니다.</p>
       </div>
       <div class="panel ctrl">
         <label for="total">연간 한국 전체 매출 목표 (선택)</label>
         <input class="money" id="total" inputmode="decimal" placeholder="예: 1200 (억원)">
         <p class="note">넣으면 시도별·AM별 목표 금액이 같은 단위로 계산됩니다.</p>
+        <label>실제 매출 (선택)</label>
+        <p class="note">아래 표 "실제 매출" 칸에 최근 1~3년 시도별 매출을 넣으면 실제 비중과 달성 지수가 나옵니다. 사내 실적이 20% 안팎으로 나오면 가장 강한 근거가 됩니다.</p>
         <div class="row-actions">
-          <button class="primary" id="balance" type="button">3명 균형 배정 추천</button>
-          <button id="reset" type="button">예시로 되돌리기</button>
+          <button id="reset" type="button">처음 상태로 되돌리기</button>
         </div>
-        <p class="note">균형 배정은 권역이 쪼개지지 않게(서울·경기·인천은 각각, 나머지는 권역 단위) 묶어서 세 AM의 비중이 가장 비슷해지는 조합을 찾습니다.</p>
       </div>
     </div>
   </section>
 
   <section class="section" aria-labelledby="s-table">
-    <h2 id="s-table">시도별 경제 현황과 타겟 비중</h2>
+    <h2 id="s-table">시도별 지표와 타겟 비중</h2>
     <div class="table-wrap">
       <table>
         <thead>
           <tr>
             <th class="l">시도</th>
+            <th>R&amp;D<br>비중</th>
             <th>GRDP<br>(조원)</th>
             <th>GRDP<br>비중</th>
             <th>인구<br>(만명)</th>
             <th>인구<br>비중</th>
-            <th>1인당 GRDP<br>(만원)</th>
             <th class="l">타겟 비중</th>
             <th class="l">목표 금액</th>
             <th class="l">담당 AM</th>
             <th>실제 매출<br>(선택)</th>
             <th>달성<br>지수</th>
-            <th class="l">주요 산업·특징</th>
+            <th class="l">소모품 수요처·특징</th>
           </tr>
         </thead>
         <tbody id="tbody"></tbody>
         <tfoot id="tfoot"></tfoot>
       </table>
     </div>
-    <p class="note"><b>달성 지수</b> = (그 지역의 실제 매출 비중 ÷ 타겟 비중) × 100. 100이면 경제 규모만큼 팔고 있는 것이고, 80 미만은 덜 팔고 있는 지역(성장 여지), 120 이상은 기준보다 많이 파는 지역(강점 지역이거나 타겟이 낮게 잡힌 곳)입니다. <span class="est">*</span> 표시는 추정치입니다.</p>
+    <p class="note"><b>달성 지수</b> = (실제 매출 비중 ÷ 타겟 비중) × 100. 100이면 기준만큼 팔고 있는 것이고, 80 미만은 덜 팔고 있는 지역, 120 이상은 기준보다 많이 파는 지역입니다. <span class="est">*</span> 표시는 추정치입니다.</p>
   </section>
 
-  <section class="section" aria-labelledby="s-guide">
-    <h2 id="s-guide">이 자료를 읽는 법</h2>
-    <div class="guide">
-      <div class="panel">
-        <h3>한국 경제의 지역 구조</h3>
-        <ul>
-          <li>수도권(서울·경기·인천)이 GRDP의 <b>약 53%</b>, 인구의 약 51%입니다. 전국 매출의 절반 이상이 수도권에서 나오는 것이 기본값입니다.</li>
-          <li>경기(651조)가 서울(575조)보다 큽니다. 반도체가 성장을 이끌었습니다.</li>
-          <li>경남·충남·경북은 제조업 중심이라 인구에 비해 경제 규모가 큽니다. 대구·부산·광주는 반대입니다.</li>
-          <li>울산은 1인당 GRDP가 전국 1위, 대구는 최하위입니다.</li>
-        </ul>
-      </div>
-      <div class="panel">
-        <h3>타겟이 적절한지 확인하는 순서</h3>
-        <ol>
-          <li>사업 성격에 맞는 가중치를 고릅니다.</li>
-          <li>17개 시도를 실제 담당 AM으로 배정합니다.</li>
-          <li>AM별 "적정 비중"을 현재 부여된 목표 비중과 비교합니다. 차이가 5%p 이상이면 조정 후보입니다.</li>
-          <li>작년 실제 매출을 넣어 달성 지수가 낮은 지역을 찾습니다. 그 지역이 다음 해 성장 여지입니다.</li>
-        </ol>
-      </div>
-      <div class="panel">
-        <h3>보정할 때 고려할 것</h3>
-        <ul>
-          <li>경제 규모는 "잠재 시장"입니다. 우리 고객이 특정 산업(예: 반도체, 병원, 유통)에 몰려 있다면 그 산업의 지역 분포가 더 정확한 기준입니다.</li>
-          <li>작년 실적 비중과 경제 규모 비중을 반반 섞어 목표를 잡으면 현실성과 성장 여지를 함께 반영할 수 있습니다.</li>
-          <li>지역 수보다 비중이 중요합니다. 경기 하나(약 25%)가 호남 3개 시도 합계(약 9%)보다 큽니다.</li>
-        </ul>
-      </div>
+  <section class="section" aria-labelledby="s-qa">
+    <h2 id="s-qa">예상 질문과 답</h2>
+    <div class="qa">
+      <details open><summary>GRDP로 보면 지방도 34%인데, 왜 20%인가요?</summary><p>GRDP에는 조선소 건설, 자동차 조립, 물류처럼 실험실과 관계없는 생산이 모두 들어갑니다. 소모품 수요는 실험 건수에 비례하고, 실험이 몰려 있는 곳은 연구소와 연구단지입니다. 그래서 R&amp;D 기준을 주로 쓰고, 지방 QC 수요는 GRDP 30%로 따로 반영했습니다.</p></details>
+      <details><summary>대전은 지방인데 왜 chanju 담당 비중에 안 들어가나요?</summary><p>대전은 다른 AM 담당입니다. "지방 20%"의 지방은 chanju 담당 9개 시도를 뜻하며, 대전·충청은 수도권과 같은 쪽에 포함됩니다. 대전만 R&amp;D의 약 9%를 차지합니다.</p></details>
+      <details><summary>울산·여수 석유화학 QC는 큰 시장 아닌가요?</summary><p>맞습니다. 그래서 R&amp;D만 쓰면 14%이지만, GRDP 30%를 섞어 20%로 올렸습니다. 두 지역의 실적이 기준보다 높게 나오면 달성 지수로 바로 확인할 수 있습니다.</p></details>
+      <details><summary>본사에서 구매하는 고객은 어떻게 되나요?</summary><p>대기업은 지방 공장에서 쓰는 소모품도 서울 본사나 수도권 구매 조직에서 계약하는 경우가 많습니다. 이 경우 매출이 수도권으로 잡히므로, 지방 AM이 직접 만들 수 있는 매출은 통계보다 더 작을 수 있습니다. ship-to(납품지) 기준 실적을 함께 보면 확인할 수 있습니다.</p></details>
     </div>
+  </section>
+
+  <section class="section" aria-labelledby="s-src">
+    <h2 id="s-src">데이터 출처</h2>
     <div class="sources">
-      <p>GRDP: 국가데이터처(통계청) 「2024년 지역소득(잠정)」, 2025.12.23 발표, 명목 기준. 서울·경기·경남·경북·대구·광주·제주·세종은 발표치, 인천은 수도권 합계(1,352조)에서 계산, <span class="est">*</span> 표시 지역은 발표된 1인당 GRDP와 전국 합계(2,561조)로 역산한 추정치(오차 ±5% 내외)입니다. 정확한 값은 <a href="https://kosis.kr/visual/nsportalStats/detailContents.do?statJipyoId=3655&vStatJipyoId=5135&listId=B" target="_blank" rel="noopener">KOSIS 지역내총생산</a>에서 확인할 수 있습니다.</p>
-      <p>인구: 행정안전부 주민등록인구 2025년 기준, 만명 단위 반올림. 1인당 GRDP는 이 인구로 나눈 값이라 공식 발표치(추계인구 기준)와 조금 다를 수 있습니다.</p>
+      <p>연구개발비: 과학기술정보통신부·KISTEP 「연구개발활동조사」. 경기·서울·수도권 합계(70.1%)·수도권+대전(79.3%)은 2022년 기준, chanju 담당 9개 시도는 2023년 기준입니다. 인천·대전은 합계에서 뺀 값, <span class="est">*</span> 표시(충북·충남·세종·제주)는 나머지를 나눈 추정치입니다. 보고 전에 <a href="https://www.index.go.kr/unity/potal/main/EachDtlPageDetail.do?idx_cd=1329" target="_blank" rel="noopener">e-나라지표 지역별 연구개발비</a>에서 같은 연도 값으로 확인하세요.</p>
+      <p>GRDP: 국가데이터처 「2024년 지역소득(잠정)」(2025.12.23), 명목. <span class="est">*</span> 표시는 1인당 GRDP로 역산한 추정치입니다. <a href="https://kosis.kr/visual/nsportalStats/detailContents.do?statJipyoId=3655&vStatJipyoId=5135&listId=B" target="_blank" rel="noopener">KOSIS 지역내총생산</a></p>
+      <p>인구: 행정안전부 주민등록인구 2025년, 만명 단위 반올림.</p>
     </div>
   </section>
 </div>
 
 <script>
 (function () {
-  // 2024 명목 GRDP(조원), 주민등록인구(만명). est: 추정치 여부
+  // rd: 연구개발비 비중(%), grdp: 2024 명목 GRDP(조원), pop: 주민등록인구(만명)
   const REGIONS = [
-    { id: "seoul",    name: "서울",  kind: "특별시",   zone: "수도권", unit: "서울", grdp: 575,   est: false, pop: 933,  feat: "금융·IT·서비스, 대기업 본사 집중" },
-    { id: "gyeonggi", name: "경기",  kind: "도",       zone: "수도권", unit: "경기", grdp: 651,   est: false, pop: 1371, feat: "반도체(수원·화성·평택·이천), 전국 1위 경제 규모" },
-    { id: "incheon",  name: "인천",  kind: "광역시",   zone: "수도권", unit: "인천", grdp: 126,   est: false, pop: 303,  feat: "공항·항만 물류, 송도 바이오" },
-    { id: "gangwon",  name: "강원",  kind: "특별자치도", zone: "강원권", unit: "강원", grdp: 62,  est: true,  pop: 151,  feat: "관광·서비스, 2024년 역성장" },
-    { id: "daejeon",  name: "대전",  kind: "광역시",   zone: "충청권", unit: "충청", grdp: 59,    est: true,  pop: 144,  feat: "대덕 연구단지, 공공기관" },
-    { id: "sejong",   name: "세종",  kind: "특별자치시", zone: "충청권", unit: "충청", grdp: 17,  est: false, pop: 39,   feat: "정부 행정 중심" },
-    { id: "chungbuk", name: "충북",  kind: "도",       zone: "충청권", unit: "충청", grdp: 92,    est: true,  pop: 159,  feat: "반도체·이차전지(청주·오창), 2024 역성장" },
-    { id: "chungnam", name: "충남",  kind: "도",       zone: "충청권", unit: "충청", grdp: 145,   est: true,  pop: 213,  feat: "디스플레이·자동차·석유화학, 1인당 GRDP 2위" },
-    { id: "gwangju",  name: "광주",  kind: "광역시",   zone: "호남권", unit: "호남", grdp: 55,    est: false, pop: 140,  feat: "자동차·가전" },
-    { id: "jeonbuk",  name: "전북",  kind: "특별자치도", zone: "호남권", unit: "호남", grdp: 68,  est: true,  pop: 172,  feat: "농생명·자동차부품, 새만금 이차전지" },
-    { id: "jeonnam",  name: "전남",  kind: "도",       zone: "호남권", unit: "호남", grdp: 104,   est: true,  pop: 177,  feat: "여수 석유화학·광양 철강·조선" },
-    { id: "daegu",    name: "대구",  kind: "광역시",   zone: "대경권", unit: "대경", grdp: 74.5,  est: false, pop: 236,  feat: "기계·자동차부품·섬유, 1인당 GRDP 최하위" },
-    { id: "gyeongbuk",name: "경북",  kind: "도",       zone: "대경권", unit: "대경", grdp: 134.7, est: false, pop: 251,  feat: "포항 철강·구미 전자" },
-    { id: "busan",    name: "부산",  kind: "광역시",   zone: "동남권", unit: "동남", grdp: 122,   est: true,  pop: 325,  feat: "항만·물류·서비스, 1인당 GRDP 하위" },
-    { id: "ulsan",    name: "울산",  kind: "광역시",   zone: "동남권", unit: "동남", grdp: 94,    est: true,  pop: 110,  feat: "자동차·조선·석유화학, 1인당 GRDP 1위" },
-    { id: "gyeongnam",name: "경남",  kind: "도",       zone: "동남권", unit: "동남", grdp: 151,   est: false, pop: 320,  feat: "조선·기계·방산, 2024년 충남 추월 3위" },
-    { id: "jeju",     name: "제주",  kind: "특별자치도", zone: "제주권", unit: "제주", grdp: 27,  est: false, pop: 66,   feat: "관광·서비스" }
+    { id: "seoul",    name: "서울", kind: "특별시",     zone: "수도권", rd: 15.7, rdEst: false, grdp: 575,   est: false, pop: 933,  feat: "대학·병원·기업 본사, 마곡 R&D 단지" },
+    { id: "gyeonggi", name: "경기", kind: "도",         zone: "수도권", rd: 51.2, rdEst: false, grdp: 651,   est: false, pop: 1371, feat: "반도체 연구소(수원·기흥·이천), 판교 바이오·제약" },
+    { id: "incheon",  name: "인천", kind: "광역시",     zone: "수도권", rd: 3.2,  rdEst: false, grdp: 126,   est: false, pop: 303,  feat: "송도 바이오의약품 생산·QC" },
+    { id: "daejeon",  name: "대전", kind: "광역시",     zone: "충청권", rd: 9.2,  rdEst: false, grdp: 59,    est: true,  pop: 144,  feat: "대덕 연구단지, 정부출연연구소" },
+    { id: "sejong",   name: "세종", kind: "특별자치시", zone: "충청권", rd: 0.5,  rdEst: true,  grdp: 17,    est: false, pop: 39,   feat: "정부 행정 중심" },
+    { id: "chungbuk", name: "충북", kind: "도",         zone: "충청권", rd: 2.5,  rdEst: true,  grdp: 92,    est: true,  pop: 159,  feat: "오송 바이오, 청주 반도체·이차전지" },
+    { id: "chungnam", name: "충남", kind: "도",         zone: "충청권", rd: 3.5,  rdEst: true,  grdp: 145,   est: true,  pop: 213,  feat: "아산 디스플레이, 대산 석유화학" },
+    { id: "jeju",     name: "제주", kind: "특별자치도", zone: "제주권", rd: 0.2,  rdEst: true,  grdp: 27,    est: false, pop: 66,   feat: "관광·서비스" },
+    { id: "busan",    name: "부산", kind: "광역시",     zone: "동남권", rd: 1.8,  rdEst: false, grdp: 122,   est: true,  pop: 325,  feat: "항만·물류, 대학·병원" },
+    { id: "ulsan",    name: "울산", kind: "광역시",     zone: "동남권", rd: 1.2,  rdEst: false, grdp: 94,    est: true,  pop: 110,  feat: "석유화학·정유 QC, 자동차·조선" },
+    { id: "gyeongnam",name: "경남", kind: "도",         zone: "동남권", rd: 2.9,  rdEst: false, grdp: 151,   est: false, pop: 320,  feat: "조선·기계·방산, 창원 산단" },
+    { id: "gwangju",  name: "광주", kind: "광역시",     zone: "호남권", rd: 1.0,  rdEst: false, grdp: 55,    est: false, pop: 140,  feat: "자동차·가전" },
+    { id: "jeonbuk",  name: "전북", kind: "특별자치도", zone: "호남권", rd: 1.3,  rdEst: false, grdp: 68,    est: true,  pop: 172,  feat: "농생명 연구기관, 새만금 이차전지" },
+    { id: "jeonnam",  name: "전남", kind: "도",         zone: "호남권", rd: 0.8,  rdEst: false, grdp: 104,   est: true,  pop: 177,  feat: "여수 석유화학 QC, 광양 철강" },
+    { id: "daegu",    name: "대구", kind: "광역시",     zone: "대경권", rd: 1.4,  rdEst: false, grdp: 74.5,  est: false, pop: 236,  feat: "첨단의료복합단지, 기계·부품" },
+    { id: "gyeongbuk",name: "경북", kind: "도",         zone: "대경권", rd: 2.8,  rdEst: false, grdp: 134.7, est: false, pop: 251,  feat: "포항 철강·소재, 구미 전자" },
+    { id: "gangwon",  name: "강원", kind: "특별자치도", zone: "강원권", rd: 0.7,  rdEst: false, grdp: 62,    est: true,  pop: 151,  feat: "원주 의료기기, 춘천 바이오" }
   ];
-  // chanju 담당 9곳은 실제 배정, 나머지 8곳의 AM 2·3 나눔은 예시(50:50 기준 균형안)
+  // chanju 담당 9곳은 실제 배정, AM 2·3 나눔은 예시
   const EXAMPLE = { gyeongnam: 0, busan: 0, ulsan: 0, jeonnam: 0, jeonbuk: 0, gwangju: 0, gyeongbuk: 0, daegu: 0, gangwon: 0,
-    seoul: 1, daejeon: 1, chungbuk: 1, chungnam: 1, jeju: 1,
-    gyeonggi: 2, incheon: 2, sejong: 2 };
+    seoul: 1, incheon: 1, daejeon: 1, sejong: 1, chungbuk: 1, chungnam: 1, jeju: 1,
+    gyeonggi: 2 };
   const AM_COLORS = ["var(--am0)", "var(--am1)", "var(--am2)"];
-  const KEY = "region-target-v2";
+  const KEY = "region-target-v3";
+  const DEFAULT_W = { r: 70, g: 30, p: 0 };
 
-  let state = { names: ["chanju", "AM 2", "AM 3"], assign: { ...EXAMPLE }, w: 50, total: "", actual: {}, example: true };
+  let state = { names: ["chanju", "AM 2", "AM 3"], assign: { ...EXAMPLE }, w: { ...DEFAULT_W }, total: "", actual: {}, example: true };
   try { const s = JSON.parse(localStorage.getItem(KEY) || "null"); if (s) state = { ...state, ...s }; } catch (e) {}
   const save = () => { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {} };
 
   const $ = (id) => document.getElementById(id);
-  const sumG = REGIONS.reduce((a, r) => a + r.grdp, 0);
-  const sumP = REGIONS.reduce((a, r) => a + r.pop, 0);
+  const sum = (k) => REGIONS.reduce((a, r) => a + r[k], 0);
+  const sumR = sum("rd"), sumG = sum("grdp"), sumP = sum("pop");
   const pct = (x, d = 1) => (x * 100).toFixed(d) + "%";
   const fmt = (x) => x.toLocaleString("ko-KR", { maximumFractionDigits: x >= 100 ? 0 : 1 });
   const parse = (v) => { const n = parseFloat(String(v).replace(/,/g, "")); return isFinite(n) && n >= 0 ? n : null; };
   const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 
-  function shares() {
-    const w = state.w / 100;
+  function sharesFor(w) {
+    const t = (w.r + w.g + w.p) || 1;
     const out = {};
-    REGIONS.forEach((r) => { out[r.id] = w * r.grdp / sumG + (1 - w) * r.pop / sumP; });
+    REGIONS.forEach((r) => { out[r.id] = (w.r * r.rd / sumR + w.g * r.grdp / sumG + w.p * r.pop / sumP) / t; });
     return out;
   }
   function actualShares() {
@@ -288,7 +330,34 @@ tfoot td { font-weight: 700; border-bottom: none; }
     REGIONS.forEach((r, i) => { out[r.id] = (vals[i] || 0) / tot; });
     return out;
   }
+  const mine = () => REGIONS.filter((r) => (state.assign[r.id] ?? -1) === 0);
+  const shareOf = (sh, rs) => rs.reduce((a, r) => a + sh[r.id], 0);
   const idxClass = (v) => (v < 80 ? "warn" : v > 120 ? "good" : "");
+
+  function renderVerdict(act) {
+    const me = mine(), nm = esc(state.names[0]);
+    const rows = [
+      { lab: "인구", sub: "소비재라면 이 기준", w: { r: 0, g: 0, p: 1 } },
+      { lab: "경제 규모 (GRDP)", sub: "일반 산업재 기준", w: { r: 0, g: 1, p: 0 } },
+      { lab: "R&D 투자", sub: "실험실 활동량", w: { r: 1, g: 0, p: 0 } },
+      { lab: "제안안", sub: "R&D 70 · GRDP 30", w: { r: 70, g: 30, p: 0 }, pick: true }
+    ];
+    if (act) rows.push({ lab: "실제 매출", sub: "표에 입력한 실적", actual: true });
+    const vals = rows.map((row) => (row.actual ? shareOf(act, me) : shareOf(sharesFor(row.w), me)));
+    $("cmp").innerHTML = rows.map((row, i) => {
+      const v = vals[i];
+      return `<div class="cmp-row${row.pick ? " pick" : ""}"><div class="lab">${row.lab}<small>${row.sub}</small></div>
+        <div class="stack"><div class="me" style="flex-basis:${v * 100}%">${pct(v, 0)}</div><div class="rest" style="flex-basis:${(1 - v) * 100}%">${pct(1 - v, 0)}</div></div></div>`;
+    }).join("");
+    const pick = vals[3], rd = vals[2], gd = vals[1];
+    $("verdict").innerHTML = `
+      <div class="stat key"><span class="lab">${nm} 담당 적정 비중 (제안안)</span><span class="val num">${pct(pick, 0)}</span><span class="sub">${me.length}개 시도 · R&amp;D 70 + GRDP 30</span></div>
+      <div class="stat"><span class="lab">나머지 두 AM 합계</span><span class="val num">${pct(1 - pick, 0)}</span><span class="sub">1인당 평균 ${pct((1 - pick) / 2, 0)}</span></div>
+      <div class="stat"><span class="lab">R&amp;D 기준만 쓰면</span><span class="val num">${pct(rd, 0)}</span><span class="sub">수도권+대전이 R&amp;D의 79%</span></div>
+      <div class="stat"><span class="lab">GRDP 기준만 쓰면</span><span class="val num">${pct(gd, 0)}</span><span class="sub">실험실 수요와 무관한 생산 포함</span></div>`;
+    $("blendMe").textContent = `약 ${pct(pick, 0)}`;
+    $("lgMe").textContent = `${state.names[0]} 담당 ${me.length}개 시도`;
+  }
 
   function renderTable(sh, act, total) {
     const maxS = Math.max(...REGIONS.map((r) => sh[r.id]));
@@ -305,11 +374,11 @@ tfoot td { font-weight: 700; border-bottom: none; }
       const opts = [-1, 0, 1, 2].map((i) => `<option value="${i}"${i === a ? " selected" : ""}>${i < 0 ? "미배정" : esc(state.names[i])}</option>`).join("");
       html += `<tr>
         <td class="l"><span class="rname">${r.name}</span><span class="kind">${r.kind}</span></td>
+        <td class="num">${pct(r.rd / sumR)}${r.rdEst ? '<span class="est">*</span>' : ""}</td>
         <td class="num">${fmt(r.grdp)}${r.est ? '<span class="est">*</span>' : ""}</td>
         <td class="num">${pct(r.grdp / sumG)}</td>
         <td class="num">${fmt(r.pop)}</td>
         <td class="num">${pct(r.pop / sumP)}</td>
-        <td class="num">${fmt(Math.round(r.grdp * 1e4 / r.pop))}</td>
         <td class="l"><div class="bar" style="--c:${c}"><i style="width:${sh[r.id] / maxS * 100}%"></i><b>${pct(sh[r.id])}</b></div></td>
         <td class="l num">${total ? fmt(total * sh[r.id]) : "–"}</td>
         <td class="l"><select class="am" id="am-${r.id}" data-id="${r.id}" style="--c:${c}" aria-label="${r.name} 담당 AM">${opts}</select></td>
@@ -319,24 +388,22 @@ tfoot td { font-weight: 700; border-bottom: none; }
       </tr>`;
     });
     $("tbody").innerHTML = html;
-    $("tfoot").innerHTML = `<tr><td class="l">합계</td><td class="num">${fmt(sumG)}</td><td class="num">100%</td><td class="num">${fmt(sumP)}</td><td class="num">100%</td><td class="num">${fmt(Math.round(sumG * 1e4 / sumP))}</td><td class="l num">100%</td><td class="l num">${total ? fmt(total) : "–"}</td><td colspan="4"></td></tr>`;
+    $("tfoot").innerHTML = `<tr><td class="l">합계</td><td class="num">100%</td><td class="num">${fmt(sumG)}</td><td class="num">100%</td><td class="num">${fmt(sumP)}</td><td class="num">100%</td><td class="l num">100%</td><td class="l num">${total ? fmt(total) : "–"}</td><td colspan="4"></td></tr>`;
   }
 
   function renderAM(sh, act, total) {
     const groups = [0, 1, 2, -1].map((i) => {
       const rs = REGIONS.filter((r) => (state.assign[r.id] ?? -1) === i);
-      return { i, rs, s: rs.reduce((a, r) => a + sh[r.id], 0), as: act ? rs.reduce((a, r) => a + act[r.id], 0) : null };
+      return { i, rs, s: shareOf(sh, rs), as: act ? shareOf(act, rs) : null };
     });
     $("split").innerHTML = groups.filter((g) => g.s > 0).map((g) => {
       const c = g.i >= 0 ? AM_COLORS[g.i] : "var(--none)";
       const label = g.i >= 0 ? state.names[g.i] : "미배정";
       return `<div style="flex-basis:${g.s * 100}%;background:${c}" title="${esc(label)} ${pct(g.s)}">${g.s > 0.07 ? esc(label) + " " + pct(g.s, 0) : ""}</div>`;
     }).join("");
-    const cards = groups.filter((g) => g.i >= 0 || g.rs.length).map((g) => {
+    $("amCards").innerHTML = groups.filter((g) => g.i >= 0 || g.rs.length).map((g) => {
       const c = g.i >= 0 ? AM_COLORS[g.i] : "var(--none)";
       const dev = g.s - 1 / 3;
-      const balance = Math.abs(dev) < 0.03 ? `<span class="pill good">균형 (3등분 대비 ${dev >= 0 ? "+" : ""}${(dev * 100).toFixed(1)}%p)</span>`
-        : `<span class="pill ${dev > 0 ? "warn" : ""}">3등분 대비 ${dev >= 0 ? "+" : ""}${(dev * 100).toFixed(1)}%p</span>`;
       const idx = g.as != null && g.s > 0 ? g.as / g.s * 100 : null;
       const nameEl = g.i >= 0
         ? `<input class="name" id="name-${g.i}" data-i="${g.i}" value="${esc(state.names[g.i])}" aria-label="AM 이름">`
@@ -345,49 +412,29 @@ tfoot td { font-weight: 700; border-bottom: none; }
         ${nameEl}
         <div class="big num">${pct(g.s)}</div>
         <div class="sub">한국 전체 매출 중 담당해야 할 비중${total ? ` · 목표 <b class="num">${fmt(total * g.s)}</b>` : ""}</div>
-        ${g.i >= 0 ? `<div>${balance}</div>` : ""}
+        ${g.i >= 0 ? `<div><span class="pill">3등분(33.3%) 대비 ${dev >= 0 ? "+" : ""}${(dev * 100).toFixed(1)}%p</span></div>` : ""}
         ${idx != null ? `<div class="sub">실제 매출 비중 <b class="num">${pct(g.as)}</b> · 달성 지수 <span class="pill ${idxClass(idx)}">${Math.round(idx)}</span></div>` : ""}
-        <div class="regions">${g.rs.length ? g.rs.map((r) => `<span>${r.name} ${pct(sh[r.id], 1)}</span>`).join("") : '<span>담당 지역 없음</span>'}</div>
+        <div class="regions">${g.rs.length ? g.rs.map((r) => `<span>${r.name} ${pct(sh[r.id], 1)}</span>`).join("") : "<span>담당 지역 없음</span>"}</div>
       </div>`;
     }).join("");
-    $("amCards").innerHTML = cards;
     $("exampleBanner").hidden = !state.example;
   }
 
   function render() {
-    const sh = shares(), act = actualShares(), total = parse(state.total);
-    $("w").value = state.w;
-    $("wLabel").textContent = `GRDP ${state.w}% · 인구 ${100 - state.w}%`;
-    document.querySelectorAll("#presets button").forEach((b) => b.classList.toggle("on", +b.dataset.w === +state.w));
+    const sh = sharesFor(state.w), act = actualShares(), total = parse(state.total);
+    const t = (state.w.r + state.w.g + state.w.p) || 1;
+    ["r", "g", "p"].forEach((k) => { $("w" + k).value = state.w[k]; $("w" + k + "L").textContent = Math.round(state.w[k] / t * 100) + "%"; });
+    document.querySelectorAll("#presets button").forEach((b) => b.classList.toggle("on", b.dataset.p === `${state.w.r},${state.w.g},${state.w.p}`));
     if (document.activeElement !== $("total")) $("total").value = state.total;
     const ae = document.activeElement, focused = ae && ae.id;
     const caret = ae && ae.tagName === "INPUT" && ae.type !== "range" ? ae.selectionStart : null;
+    renderVerdict(act);
     renderAM(sh, act, total);
     renderTable(sh, act, total);
-    if (focused && $(focused) && focused !== "total" && focused !== "w") {
+    if (focused && $(focused) && !["total", "wr", "wg", "wp"].includes(focused)) {
       const el = $(focused); el.focus();
       if (caret != null && el.setSelectionRange) el.setSelectionRange(caret, caret);
     }
-  }
-
-  // 권역 단위를 3명에게 나누는 모든 조합(3^9) 중 최대-최소 비중 차가 가장 작은 것
-  function balance() {
-    const sh = shares();
-    const units = [...new Set(REGIONS.map((r) => r.unit))];
-    const us = units.map((u) => REGIONS.filter((r) => r.unit === u).reduce((a, r) => a + sh[r.id], 0));
-    let best = null, bestSpread = Infinity;
-    const n = units.length, combos = Math.pow(3, n);
-    for (let k = 0; k < combos; k++) {
-      const t = [0, 0, 0]; let x = k; const pick = [];
-      for (let j = 0; j < n; j++) { const a = x % 3; x = (x - a) / 3; pick.push(a); t[a] += us[j]; }
-      const spread = Math.max(...t) - Math.min(...t);
-      if (spread < bestSpread - 1e-9) { bestSpread = spread; best = pick; }
-    }
-    // 번호를 서울이 속한 그룹=첫 번째 AM, 그다음 등장 순으로 정렬
-    const order = []; best.forEach((a) => { if (!order.includes(a)) order.push(a); });
-    const remap = {}; order.forEach((a, i) => { remap[a] = i; });
-    REGIONS.forEach((r) => { state.assign[r.id] = remap[best[units.indexOf(r.unit)]]; });
-    state.example = false;
   }
 
   document.addEventListener("change", (e) => {
@@ -396,7 +443,7 @@ tfoot td { font-weight: 700; border-bottom: none; }
   });
   document.addEventListener("input", (e) => {
     const t = e.target;
-    if (t.id === "w") { state.w = +t.value; }
+    if (t.dataset.k) { state.w = { ...state.w, [t.dataset.k]: +t.value }; }
     else if (t.id === "total") { state.total = t.value; }
     else if (t.matches("input.act")) { state.actual[t.dataset.id] = t.value; }
     else if (t.matches("input.name")) { state.names[+t.dataset.i] = t.value || `AM ${+t.dataset.i + 1}`; }
@@ -405,10 +452,12 @@ tfoot td { font-weight: 700; border-bottom: none; }
   });
   $("presets").addEventListener("click", (e) => {
     const b = e.target.closest("button"); if (!b) return;
-    state.w = +b.dataset.w; save(); render();
+    const [r, g, p] = b.dataset.p.split(",").map(Number);
+    state.w = { r, g, p }; save(); render();
   });
-  $("balance").addEventListener("click", () => { balance(); save(); render(); });
-  $("reset").addEventListener("click", () => { state.assign = { ...EXAMPLE }; state.example = true; state.actual = {}; save(); render(); });
+  $("reset").addEventListener("click", () => {
+    state.assign = { ...EXAMPLE }; state.example = true; state.actual = {}; state.w = { ...DEFAULT_W }; save(); render();
+  });
 
   render();
 })();
