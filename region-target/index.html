@@ -136,7 +136,7 @@ tfoot td { font-weight: 700; border-bottom: none; }
   <section class="section" aria-labelledby="s-am">
     <div class="row-actions" style="justify-content: space-between">
       <h2 id="s-am">AM별 적정 타겟 비중</h2>
-      <span class="banner" id="exampleBanner">지금은 <b>예시 배정</b>입니다. 아래 표에서 실제 담당 지역으로 바꿔주세요.</span>
+      <span class="banner" id="exampleBanner">chanju 담당 9곳은 실제 배정, <b>AM 2·AM 3의 나눔은 예시</b>입니다. 표에서 바꿀 수 있습니다.</span>
     </div>
     <div class="split" id="split" aria-label="AM별 타겟 비중 막대"></div>
     <div class="am-cards" id="amCards"></div>
@@ -255,13 +255,14 @@ tfoot td { font-weight: 700; border-bottom: none; }
     { id: "gyeongnam",name: "경남",  kind: "도",       zone: "동남권", unit: "동남", grdp: 151,   est: false, pop: 320,  feat: "조선·기계·방산, 2024년 충남 추월 3위" },
     { id: "jeju",     name: "제주",  kind: "특별자치도", zone: "제주권", unit: "제주", grdp: 27,  est: false, pop: 66,   feat: "관광·서비스" }
   ];
-  const EXAMPLE = { seoul: 0, incheon: 0, gangwon: 0, jeju: 0, gyeonggi: 1,
-    daejeon: 2, sejong: 2, chungbuk: 2, chungnam: 2, gwangju: 2, jeonbuk: 2, jeonnam: 2,
-    daegu: 2, gyeongbuk: 2, busan: 2, ulsan: 2, gyeongnam: 2 };
+  // chanju 담당 9곳은 실제 배정, 나머지 8곳의 AM 2·3 나눔은 예시(50:50 기준 균형안)
+  const EXAMPLE = { gyeongnam: 0, busan: 0, ulsan: 0, jeonnam: 0, jeonbuk: 0, gwangju: 0, gyeongbuk: 0, daegu: 0, gangwon: 0,
+    seoul: 1, daejeon: 1, chungbuk: 1, chungnam: 1, jeju: 1,
+    gyeonggi: 2, incheon: 2, sejong: 2 };
   const AM_COLORS = ["var(--am0)", "var(--am1)", "var(--am2)"];
-  const KEY = "region-target-v1";
+  const KEY = "region-target-v2";
 
-  let state = { names: ["나", "AM 2", "AM 3"], assign: { ...EXAMPLE }, w: 50, total: "", actual: {}, example: true };
+  let state = { names: ["chanju", "AM 2", "AM 3"], assign: { ...EXAMPLE }, w: 50, total: "", actual: {}, example: true };
   try { const s = JSON.parse(localStorage.getItem(KEY) || "null"); if (s) state = { ...state, ...s }; } catch (e) {}
   const save = () => { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {} };
 
